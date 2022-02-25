@@ -1,4 +1,8 @@
 # NecroCloud
 Folder and File System Monitor Cloud Service
 
-# Its just beggiding, soon you will have a complete, opensource and freeware ( like many others ) but hey, this one is mine! :)
+# Its just starting
+
+Soon you'll have a Complete and OpenSource Cloud File System.
+
+I know, there are too many other arround, but hey, this one is mine! :)
