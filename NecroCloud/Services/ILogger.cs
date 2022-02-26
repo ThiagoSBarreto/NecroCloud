@@ -12,14 +12,14 @@ namespace NecroCloud.Services
     internal interface ILogger
     {
         /// <summary>
-        /// Configurações do LOGGER
+        /// 
         /// </summary>
-        /// <param name="caminho">Caminho onde os arquivos de LOG serão armazenados. Padrão: Cria pasta dos LOGS no local onde a aplicação for executada</param>
-        /// <param name="tamanhoMaximoLog">Tamanho Maximo dos arquivos de LOG. Padrão: 30</param>
-        /// <param name="tipoTamanhoLog">Define a unidade do tamanho maximo dos arquivos de LOG. Padrão: MB</param>
-        /// <param name="tempoPersistenciaLog">Define o tempo que os arquivos de LOG existirão no Sistema. Padrão: 3</param>
-        /// <param name="tipoPersistencia">Define a unidade de tempo que os arquivos de LOG existirão no Sistema. Padrão: Dias</param>
-        void Configurar(string caminho = "", int tamanhoMaximoLog = 30, TipoTamanhoLog tipoTamanhoLog = TipoTamanhoLog.MB, int tempoPersistenciaLog = 3, TipoPersistencia tipoPersistencia = TipoPersistencia.DIAS);
+        /// <param name="path"></param>
+        /// <param name="maxLogSize"></param>
+        /// <param name="maxLogSizeType"></param>
+        /// <param name="logPersistenceTime"></param>
+        /// <param name="logPersistenceTimeType"></param>
+        void Configurar(string path = "", int maxLogSize = 30, TipoTamanhoLog maxLogSizeType = TipoTamanhoLog.MB, int logPersistenceTime = 3, TipoPersistencia logPersistenceTimeType = TipoPersistencia.DIAS);
 
         /// <summary>
         /// Cria uma mensagem de LOG e grava em Arquivo

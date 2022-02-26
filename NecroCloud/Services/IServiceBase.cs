@@ -15,7 +15,7 @@ namespace NecroCloud.Services
         /// <summary>
         /// Metodo que será chamado apos configuração
         /// </summary>
-        bool Start();
+        void Start();
         /// <summary>
         /// Metodo que será chamado para Parar o serviço, mas a instancia continuará ativa
         /// sendo necessario chamar "Start" novamente
