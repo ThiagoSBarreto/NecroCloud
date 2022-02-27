@@ -14,6 +14,8 @@ namespace NecroCloud.Model
 
         public string Name { get; set; }
 
+        public string FileExtension { get; set; }
+
         public string LocalFullPath { get; set; }
 
         public string ServerFullPath { get; set; }
@@ -32,13 +34,13 @@ namespace NecroCloud.Model
 
         public bool IsFolder { get; set; }
 
-        public DateTime CreationDate { get; set; }
+        public DateTime? CreationDate { get; set; }
 
-        public DateTime LastModifiedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
 
-        public DateTime DeletionDate { get; set; }
+        public DateTime? DeletionDate { get; set; }
 
-        public DateTime LastSyncDate { get; set; }
+        public DateTime? LastSyncDate { get; set; }
 
         public bool Deleted { get; set; }
 

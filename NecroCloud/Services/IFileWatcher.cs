@@ -12,5 +12,6 @@ namespace NecroCloud.Services
         void StartSubRoutine();
         void StopSubRoutine();
         void ProcessItem(Item item);
+        void CompareFilesWithServer(List<Item> items);
     }
 }

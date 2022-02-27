@@ -12,5 +12,7 @@ namespace NecroCloud.Services
         string CalculateHash(string path);
         bool IsFolder(string path);
         string GetFileName(string path);
+        string GetFileExtension(string path);
+        DateTime? GetLastModifiedDate(string path);
     }
 }

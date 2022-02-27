@@ -104,12 +104,15 @@ namespace NecroCloud.Services
             bool isFolder = false;
             try
             {
-                FileAttributes fa = File.GetAttributes(path);
-                isFolder = (fa.HasFlag(FileAttributes.Directory));
+                if (Directory.Exists(path))
+                {
+                    FileAttributes fa = File.GetAttributes(path);
+                    isFolder = (fa.HasFlag(FileAttributes.Directory));
+                }
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.CreateLog("Error while checking if path is folder or file", LogType.ERROR,ex);
+                // Given path isn't a folder
             }
             return isFolder;
         }
@@ -123,8 +126,11 @@ namespace NecroCloud.Services
             long size = 0;
             try
             {
-                FileInfo info = new FileInfo(path);
-                size = info.Length;
+                if (File.Exists(path))
+                {
+                    FileInfo info = new FileInfo(path);
+                    size = info.Length;
+                }
             }
             catch (Exception ex)
             {
@@ -160,10 +166,43 @@ namespace NecroCloud.Services
         {
             if (!string.IsNullOrWhiteSpace(path))
             {
-                int index = path.LastIndexOf("\\");
-                return path.Substring(index + 2, path.Length - index - 2);
+                return Path.GetFileName(path);
             }
             return null;
+        }
+
+        public string GetFileExtension(string path)
+        {
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                string extension = Path.GetExtension(path);
+                return extension;
+            }
+            return null;
+        }
+
+        public DateTime? GetLastModifiedDate(string path)
+        {
+            DateTime? lastModifiedDate = null;
+            try
+            {
+                if (File.Exists(path))
+                {
+                    FileInfo info = new FileInfo(path);
+                    lastModifiedDate = info.LastWriteTime;
+                }
+                else if (Directory.Exists(path))
+                {
+                    FileInfo info = new FileInfo(path);
+                    lastModifiedDate = info.LastWriteTime;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.CreateLog("Error while calculating file size", LogType.ERROR, ex);
+                return null;
+            }
+            return lastModifiedDate;
         }
     }
 }

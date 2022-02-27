@@ -20,22 +20,32 @@ namespace NecroCloud.Services
 
         public void ProcessItem(Item item)
         {
-            if (_queue.Where(x => x.LocalFullPath == item.LocalFullPath && x.Process != item.Process).Count() == 0)
+            Item tempItem = _queue.Where(w => w.LocalFullPath == item.LocalFullPath &&
+                                  w.Hash != item.Hash &&
+                                  w.Size != item.Size).FirstOrDefault();
+            if (tempItem != null)
             {
-                _queue.Enqueue(item);
+                if (tempItem.LastModifiedDate.HasValue && item.LastModifiedDate.HasValue)
+                {
+                    if (tempItem.LastSyncDate.Value > item.LastModifiedDate.Value)
+                    {
+                        _queue = new Queue<Item>(_queue.Where(w => w.Hash != tempItem.Hash).ToList());
+                    }
+                }
             }
+            _queue.Enqueue(item);
         }
 
-            public void StartSubRoutine()
+        public void StartSubRoutine()
         {
             _cancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancellationTokenSource.Token;
-            _subRoutine = new Task(async() =>
+            _subRoutine = new Task(async () =>
             {
                 while (true)
                 {
                     ProcessQueue();
-                    await Task.Delay(100);
+                    await Task.Delay(500);
                 }
             }, _cancellationToken);
             _subRoutine.Start();
@@ -46,16 +56,16 @@ namespace NecroCloud.Services
             _cancellationTokenSource.Cancel();
         }
 
+        public void CompareFilesWithServer(List<Item> items)
+        {
+
+        }
+
         private void ProcessQueue()
         {
             if (_queue.Count > 0)
             {
                 Item item = _queue.Dequeue();
-
-                if (item.Name.StartsWith("~") || item.Name.EndsWith(".tmp") || item.Name.EndsWith(".TMP") || item.Hash == "%")
-                {
-                    return;
-                }
 
                 if (CheckFileIntegrity(ref item) == null)
                 {
@@ -102,6 +112,14 @@ namespace NecroCloud.Services
                 if (item.Size <= 0)
                 {
                     ProcessItem(item);
+                    return null;
+                }
+            }
+
+            if (item.Name.StartsWith("~") || item.Name.EndsWith(".tmp") || item.Name.EndsWith(".TMP") || item.Hash == "%")
+            {
+                if (!item.IsFolder && string.IsNullOrWhiteSpace(item.FileExtension))
+                {
                     return null;
                 }
             }
