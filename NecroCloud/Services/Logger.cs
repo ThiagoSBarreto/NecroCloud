@@ -10,6 +10,7 @@ namespace NecroCloud.Services
     {
         private ConfiguracaoLog _config;
         private object _logLocker = new object();
+        private Timer _timer;
 
         public void Configurar(string caminho = "", int tamanhoMaximoLog = 30, TipoTamanhoLog tipoTamanhoLog = TipoTamanhoLog.MB, int tempoPersistenciaLog = 3, TipoPersistencia tipoPersistencia = TipoPersistencia.DIAS)
         {
@@ -21,6 +22,8 @@ namespace NecroCloud.Services
             _config.TipoPersistencia = tipoPersistencia;
 
             if (!Directory.Exists(_config.Caminho)) Directory.CreateDirectory(_config.Caminho);
+
+            _timer = new Timer(new TimerCallback(LogRoutine), null, 0, 36000);
         }
 
         public void CreateLog(string message, LogType logType = LogType.MESSAGE, Exception ex = null)
@@ -106,7 +109,6 @@ namespace NecroCloud.Services
                 }
             }
             PrintToConsole(sb.ToString(), logType);
-            LogRoutine();
         }
 
         private string InnerException(Exception ex)
@@ -129,7 +131,7 @@ namespace NecroCloud.Services
             return sb.ToString();
         }
 
-        private void LogRoutine()
+        private void LogRoutine(object state)
         {
             string tempFile = Path.Combine(_config.Caminho, "log.tmp");
 

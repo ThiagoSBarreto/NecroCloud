@@ -21,8 +21,7 @@ namespace NecroCloud.Services
         public void ProcessItem(Item item)
         {
             Item tempItem = _queue.Where(w => w.LocalFullPath == item.LocalFullPath &&
-                                  w.Hash != item.Hash &&
-                                  w.Size != item.Size).FirstOrDefault();
+                                  w.Hash != item.Hash).FirstOrDefault();
             if (tempItem != null)
             {
                 if (tempItem.LastModifiedDate.HasValue && item.LastModifiedDate.HasValue)
@@ -44,7 +43,11 @@ namespace NecroCloud.Services
             {
                 while (true)
                 {
-                    ProcessQueue();
+                    int state = await ProcessQueue();
+                    if (state == 0)
+                    {
+                        await Task.Delay(5000);
+                    }
                     await Task.Delay(500);
                 }
             }, _cancellationToken);
@@ -61,7 +64,7 @@ namespace NecroCloud.Services
 
         }
 
-        private void ProcessQueue()
+        private async Task<int> ProcessQueue()
         {
             if (_queue.Count > 0)
             {
@@ -69,26 +72,29 @@ namespace NecroCloud.Services
 
                 if (CheckFileIntegrity(ref item) == null)
                 {
-                    return;
+                    if (_queue.Count > 0)
+                    {
+                        return 1;
+                    }
+                    return 0;
                 }
 
                 _logger.CreateLog($"Processing Item: {item.LocalFullPath}", LogType.CONSOLE);
                 switch (item.Process)
                 {
                     case ProcessType.DELETE:
-                        DeleteItem(item);
-                        break;
+                        return await DeleteItem(item);
                     case ProcessType.SYNC:
-                        SyncItem(item);
-                        break;
+                        return await SyncItem(item);
                     case ProcessType.DOWNLOAD:
-                        DownloadItem(item);
-                        break;
+                        return await DownloadItem(item);
                     case ProcessType.UPLOAD:
-                        UploadItem(item);
-                        break;
+                        return await UploadItem(item);
+                    default:
+                        return 0;
                 }
             }
+            return 0;
         }
 
         private Item CheckFileIntegrity(ref Item item)
@@ -127,51 +133,55 @@ namespace NecroCloud.Services
             return item;
         }
 
-        private void DeleteItem(Item item)
+        private async Task<int> DeleteItem(Item item)
         {
             try
             {
-
+                return 1;
             }
             catch (Exception ex)
             {
                 _logger.CreateLog($"Error while deleting item: {item.LocalFullPath}", LogType.ERROR, ex);
+                return 0;
             }
         }
 
-        private void SyncItem(Item item)
+        private async Task<int> SyncItem(Item item)
         {
             try
             {
-
+                return 1;
             }
             catch (Exception ex)
             {
                 _logger.CreateLog($"Error while sync item: {item.LocalFullPath}", LogType.ERROR, ex);
+                return 0;
             }
         }
 
-        private void UploadItem(Item item)
+        private async Task<int> UploadItem(Item item)
         {
             try
             {
-
+                return 1;
             }
             catch (Exception ex)
             {
                 _logger.CreateLog($"Error while uploading item: {item.LocalFullPath}", LogType.ERROR, ex);
+                return 0;
             }
         }
 
-        private void DownloadItem(Item item)
+        private async Task<int> DownloadItem(Item item)
         {
             try
             {
-
+                return 1;
             }
             catch (Exception ex)
             {
                 _logger.CreateLog($"Error while downloading item: {item.LocalFullPath}", LogType.ERROR, ex);
+                return 0;
             }
         }
     }
