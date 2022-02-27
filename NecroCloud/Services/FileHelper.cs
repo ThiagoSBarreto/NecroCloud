@@ -46,11 +46,11 @@ namespace NecroCloud.Services
             string hash = "$";
             try
             {
-                using (var md5 = MD5.Create())
+                using (var sha256 = SHA256.Create())
                 {
                     using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
                     {
-                        hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
+                        hash = BitConverter.ToString(sha256.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
                     }
                 }
             }
@@ -69,9 +69,9 @@ namespace NecroCloud.Services
                         FileAttributes fa = File.GetAttributes(path);
                         if (fa.HasFlag(FileAttributes.Directory))
                         {
-                            using (var md5 = MD5.Create())
+                            using (var sha256 = SHA256.Create())
                             {
-                                hash = BitConverter.ToString(md5.ComputeHash(Encoding.ASCII.GetBytes(path))).Replace("-", "").ToLowerInvariant();
+                                hash = BitConverter.ToString(sha256.ComputeHash(Encoding.ASCII.GetBytes(path))).Replace("-", "").ToLowerInvariant();
                             }
                         }
                     }
